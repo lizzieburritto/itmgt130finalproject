@@ -1,0 +1,53 @@
+import datetime
+
+class Appointment:
+    def __init__(self, patient_name, dentist_name, date_time):
+        self.patient_name = patient_name
+        self.dentist_name = dentist_name
+        self.date_time = date_time
+
+class DentalOffice:
+    def __init__(self, clinic_rooms, dentists):
+        self.clinic_rooms = clinic_rooms
+        self.dentists = dentists
+        self.appointments = []
+        
+    def schedule_appointment(self, patient_name, dentist_name, date_time):
+        # check if there's an available clinic room and dentist at the specified date/time
+        if len(self.appointments) >= self.clinic_rooms:
+            return "No clinic room available"
+        
+        for appointment in self.appointments:
+            if appointment.date_time == date_time and appointment.dentist_name == dentist_name:
+                return f"{dentist_name} is not available at {date_time}"
+            
+        if dentist_name not in self.dentists:
+            return f"{dentist_name} is not a registered dentist"
+        
+        # create a new appointment and add it to the list
+        new_appointment = Appointment(patient_name, dentist_name, date_time)
+        self.appointments.append(new_appointment)
+        
+        return "Appointment scheduled successfully"
+    
+    def cancel_appointment(self, patient_name, date_time):
+        for appointment in self.appointments:
+            if appointment.patient_name == patient_name and appointment.date_time == date_time:
+                self.appointments.remove(appointment)
+                return "Appointment cancelled successfully"
+            
+        return "Appointment not found"
+    
+    def get_appointments_by_dentist(self, dentist_name):
+        appointments = []
+        for appointment in self.appointments:
+            if appointment.dentist_name == dentist_name:
+                appointments.append(appointment)
+        return appointments
+    
+    def get_appointments_by_date(self, date):
+        appointments = []
+        for appointment in self.appointments:
+            if appointment.date_time.date() == date.date():
+                appointments.append(appointment)
+        return appointments
