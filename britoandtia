@@ -1,53 +1,248 @@
-import datetime
+# Dictionary of dentist details (case sensitive)
+dentist_details = {
+    'A': {
+        'name': 'Dr. Alpha',
+        'shift': 'mon_tue',
+        'clinic_room': 'room_A',
+        'start_time': '08:00 AM',
+        'end_time': '12:00 PM',
+        'days_available': ['Monday', 'Tuesday'],
 
-class Appointment:
-    def __init__(self, patient_name, dentist_name, date_time):
-        self.patient_name = patient_name
-        self.dentist_name = dentist_name
-        self.date_time = date_time
+    },
+    'B': {
+        'name': 'Dr. Bravo',
+        'shift': 'mon_tue',
+        'clinic_room': 'room_B',
+        'start_time': '08:00 AM',
+        'end_time': '12:00 PM',
+        'days_available': ['Monday', 'Tuesday'],
+    },
+    'C': {
+        'name': 'Dr. Charlie',
+        'shift': 'mon_tue',
+        'clinic_room': 'room_C',
+        'start_time': '08:00 AM',
+        'end_time': '12:00 PM',
+        'days_available': ['Monday', 'Tuesday'],
+    },
+    'D': {
+        'name': 'Dr. Delta',
+        'shift': 'wed_thu',
+        'clinic_room': 'room_A',
+        'start_time': '01:00 PM',
+        'end_time': '05:00 PM',
+        'days_available': ['Wednesday', 'Thursday'],
+    },
+    'E': {
+        'name': 'Dr. Echo',
+        'shift': 'wed_thu',
+        'clinic_room': 'room_B',
+        'start_time': '01:00 PM',
+        'end_time': '05:00 PM',
+        'days_available': ['Wednesday', 'Thursday'],
+    },
+    'F': {
+        'name': 'Dr. Foxtrot',
+        'shift': 'wed_thu',
+        'clinic_room': 'room_C',
+        'start_time': '01:00 PM',
+        'end_time': '05:00 PM',
+        'days_available': ['Wednesday', 'Thursday'],
+    },
+    'G': {
+        'name': 'Dr. Gold',
+        'shift': 'fri_sat',
+        'clinic_room': 'room_A',
+        'start_time': '08:00 AM',
+        'end_time': '12:00 PM',
+        'days_available': ['Friday', 'Saturday'],
+    },
+    'H': {
+        'name': 'Dr. Helium',
+        'shift': 'fri_sat',
+        'clinic_room': 'room_B',
+        'start_time': '08:00 AM',
+        'end_time': '12:00 PM',
+        'days_available': ['Friday', 'Saturday'],
+    },
+    'I': {
+        'name': 'Dr. India',
+        'shift': 'fri_sat',
+        'clinic_room': 'room_C',
+        'start_time': '08:00 AM',
+        'end_time': '12:00 PM',
+        'days_available': ['Friday', 'Saturday'],
+    },
+    'J': {
+        'name': 'Dr. Juliet',
+        'shift': 'sun_morning',
+        'clinic_room': 'room_A',
+        'start_time': '08:00 AM',
+        'end_time': '12:00 PM',
+        'days_available': ['Sunday'],
+    }
+}
+def get_days_available(start_time, end_time):
+    days_available = []
+    if start_time == '08:00 AM' and end_time == '12:00 PM':
+        days_available = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    elif start_time == '01:00 PM' and end_time == '05:00 PM':
+        days_available = ['Wednesday', 'Thursday', 'Friday']
+    return days_available
 
-class DentalOffice:
-    def __init__(self, clinic_rooms, dentists):
-        self.clinic_rooms = clinic_rooms
-        self.dentists = dentists
-        self.appointments = []
-        
-    def schedule_appointment(self, patient_name, dentist_name, date_time):
-        # check if there's an available clinic room and dentist at the specified date/time
-        if len(self.appointments) >= self.clinic_rooms:
-            return "No clinic room available"
-        
-        for appointment in self.appointments:
-            if appointment.date_time == date_time and appointment.dentist_name == dentist_name:
-                return f"{dentist_name} is not available at {date_time}"
+# Dictionary of clinic room details (case sensitive)
+clinic_room_details = {
+    'room_A': {
+        'name': 'Clinic Room A'
+    },
+    'room_B': {
+        'name': 'Clinic Room B'
+    },
+    'room_C': {
+        'name': 'Clinic Room C'
+    }
+}
+
+# Dictionary to store appointments
+appointments = {}
+
+def is_int(string):
+    try:
+        int(string)
+    except ValueError:
+        return False
+    else:
+        return True
+
+
+# Empty list to store all patients' information
+all_patients = []
+
+import re
+import random
+from datetime import datetime
+
+# Keep patient details in a dictionary
+patients = {}
+
+while True:
+    # Ask if the patient is a new or existing patient
+    patient_status = input("Welcome to ITMGT 130 Dental Clinic! Is the patient a new or existing patient? (n/e) ").lower()
+
+    if patient_status == 'n':
+        # Get details for new patients
+        patient_name = input("Please enter patient's full name: ")
+        # Check if patient name is valid
+        if not all(word.isalpha() for word in patient_name.split()):
+            print("Invalid patient name. Please enter a valid patient name using alphabetical characters only.")
+            continue
+
+        patient_birthdate = input("Please enter patient's birthdate (MM/DD/YYYY): ")
+        patient_address = input("Please enter patient's address: ")
+        patient_contact = input("Please enter patient's cellphone number: ")
+        # Remember the patient details
+        patients[patient_name] = {
+            'birthdate': patient_birthdate,
+            'address': patient_address,
+            'contact': patient_contact,
+        }
+        print(f"{patient_name} has been registered in the patient database.")
+
+    elif patient_status == 'e':
+        # Get full name for existing patients
+        patient_name = input("Please enter patient's full name: ")
+        # Check if patient name is valid
+        if not patient_name.isalpha():
+            print("Invalid patient name. Please enter a valid patient name using alphabetical characters only.")
+            continue
+
+        # Check if patient exists in database
+        if patient_name not in patients:
+            print(f"{patient_name} is not registered in the patient database. Please register first before scheduling an appointment.")
+            continue
+
+    else:
+        print("Invalid input. Please enter 'n' for new patient or 'e' for existing patient.")
+        continue
+
+    # APPOINTMENT SCHEDULING PART
+    while True:
+        # Ask if the patient wants to schedule an appointment or ask an inquiry
+        option = input(f"Does {patient_name} want to schedule an appointment or ask an inquiry? (a/i)").lower()
+        if option == 'a':
+            while True:
+                # Ask for patient's available day of the week and free time
+                available_day = input(f"What is {patient_name}'s available day of the week? (Monday/Tuesday/Wednesday/Thursday/Friday/Saturday/Sunday)").title()
+                free_time = input(f"What is {patient_name}'s free time? (format: HH:MM AM/PM)").upper()
+
+                # Check if the day is valid
+                if available_day not in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']:
+                    print("Invalid day. Please enter a valid day of the week.")
+                    continue
+
+                # Check if the time is valid
+                if not re.match(r'^\d{1,2}:\d{2} (AM|PM)$', free_time):
+                    print("Invalid time. Please enter a valid time in the format HH:MM AM/PM like 09:00 PM.")
+                    continue
+
+                # Find available dentists on the given day and time
+                available_dentists = []
+                for letter, details in dentist_details.items():
+                    if available_day in details['days_available']:
+                        shift_start = datetime.strptime(details['start_time'], '%I:%M %p')
+                        shift_end = datetime.strptime(details['end_time'], '%I:%M %p')
+                        appt_time = datetime.strptime(free_time, '%I:%M %p')
+                        if shift_start <= appt_time <= shift_end:
+                            available_dentists.append(letter)
+
+                # If no dentists are available on the given day and time
+                if not available_dentists:
+                    print("Sorry, there are no available dentists on that day and time.")
+                    continue
+               
+                # Select a random available dentist
+                selected_dentist = random.choice(available_dentists)
+                print(f"{patient_name}'s appointment with {dentist_details[selected_dentist]['name']} has been scheduled on {available_day} at {free_time}.")
+                print()
+                break
             
-        if dentist_name not in self.dentists:
-            return f"{dentist_name} is not a registered dentist"
-        
-        # create a new appointment and add it to the list
-        new_appointment = Appointment(patient_name, dentist_name, date_time)
-        self.appointments.append(new_appointment)
-        
-        return "Appointment scheduled successfully"
-    
-    def cancel_appointment(self, patient_name, date_time):
-        for appointment in self.appointments:
-            if appointment.patient_name == patient_name and appointment.date_time == date_time:
-                self.appointments.remove(appointment)
-                return "Appointment cancelled successfully"
-            
-        return "Appointment not found"
-    
-    def get_appointments_by_dentist(self, dentist_name):
-        appointments = []
-        for appointment in self.appointments:
-            if appointment.dentist_name == dentist_name:
-                appointments.append(appointment)
-        return appointments
-    
-    def get_appointments_by_date(self, date):
-        appointments = []
-        for appointment in self.appointments:
-            if appointment.date_time.date() == date.date():
-                appointments.append(appointment)
-        return appointments
+        elif option == 'i':
+            print("Our clinic currently does not address inquiries unrelated to appointments. You may call us at 0917-257-3222 for your inquiries instead.")
+        else:
+            print("Invalid option. Please enter 'a' to schedule an appointment or 'i' to ask an inquiry.")
+            continue
+
+        # Ask if the patient wants to schedule another appointment or exit
+        another_appointment = input(f"{patient_name}'s schedule has been completed! Do you want to schedule another appointment for {patient_name}? (y/n)").lower()
+        if another_appointment == 'y':
+            continue
+        elif another_appointment == 'n':
+            print(f"{patient_name}'s schedule has been completed!")
+            break
+        else:
+            print("Invalid input. Please enter 'y' to schedule another appointment or 'n' to exit.")
+            continue
+
+        # function to check availability
+        def check_availability(dentist_name, datetime_slot):
+            if dentist_name not in appointments:
+                return True
+            else:
+                for slot in appointments[dentist_name]:
+                    if slot == datetime_slot:
+                        return False
+            return True
+
+        # function to make an appointment
+        def make_appointment(patient_name, dentist_name, datetime_slot):
+            if check_availability(dentist_name, datetime_slot):
+                if dentist_name not in appointments:
+                    appointments[dentist_name] = []
+                appointments[dentist_name].append(datetime_slot)
+                print(f"Appointment made for {patient_name} with {dentist_name} at {datetime_slot}")
+                # create a dictionary to store the patient's details
+                patient_info = {'name': patient_name, 'dentist': dentist_name, 'datetime': datetime_slot}
+                # add the patient's details to the list of all patients' information
+                all_patients.append(patient_info)
+            else:
+                print(f"{dentist_name} is not available at {datetime_slot}. Please choose another time slot.")
